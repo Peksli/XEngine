@@ -14,6 +14,9 @@ namespace XEngine{
 		xengineSink = std::make_shared<sink>();
 		clientSink = std::make_shared<sink>();
 
+		xengineSink->set_pattern("%^[%T] %n: %v%$");
+		clientSink->set_pattern("[%T] [%l] %n: %v");
+
 		xengineLogger = std::make_shared<logger>("xengineLogger", xengineSink);
 		clientLogger = std::make_shared<logger>("clientLogger", clientSink);
 

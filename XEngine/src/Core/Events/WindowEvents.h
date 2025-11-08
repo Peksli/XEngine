@@ -10,7 +10,6 @@ namespace XEngine {
 		virtual ~WindowCloseEvent() = default;
 
 		SET_STATIC_PART(WindowClose);
-		void OnEvent()              override;
 		std::string toString()      override;
 		EventCategory GetCategory() override;
 		EventType GetType()         override;
@@ -22,7 +21,6 @@ namespace XEngine {
 		virtual ~WindowResizeEvent() = default;
 
 		SET_STATIC_PART(WindowResize);
-		void OnEvent()              override;
 		std::string toString()      override;
 		EventCategory GetCategory() override;
 		EventType GetType()         override;
@@ -40,7 +38,6 @@ namespace XEngine {
 		virtual ~WindowMovedEvent() = default;
 
 		SET_STATIC_PART(WindowMoved);
-		void OnEvent()              override;
 		std::string toString()      override;
 		EventCategory GetCategory() override;
 		EventType GetType()         override;

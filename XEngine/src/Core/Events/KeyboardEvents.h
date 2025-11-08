@@ -4,13 +4,13 @@
 
 namespace XEngine {
 
-	class KeyPressedEvent : public Event {
+	class KeyPressedEvent : public Event 
+	{
 	public:
 		KeyPressedEvent(int keyCode, bool repeat);
 		virtual ~KeyPressedEvent() = default;
 
 		SET_STATIC_PART(KeyPressed);
-		void OnEvent()              override;
 		std::string toString()      override;
 		EventCategory GetCategory() override;
 		EventType GetType()         override;
@@ -23,13 +23,13 @@ namespace XEngine {
 		bool m_Repeat;
 	};
 
-	class KeyReleasedEvent : public Event {
+	class KeyReleasedEvent : public Event 
+	{
 	public:
 		KeyReleasedEvent(int keyCode);
 		virtual ~KeyReleasedEvent() = default;
 
 		SET_STATIC_PART(KeyReleased);
-		void OnEvent()              override;
 		std::string toString()      override;
 		EventCategory GetCategory() override;
 		EventType GetType()         override;

@@ -2,6 +2,10 @@
 
 #include <memory>
 #include <string>
+#include "src/Core/Events/Event.h"
+#include "src/Core/Events/WindowEvents.h"
+#include "src/Core/Events/KeyboardEvents.h"
+#include "src/Core/Events/MouseEvents.h"
 
 
 namespace XEngine {
@@ -19,6 +23,7 @@ namespace XEngine {
 		int height;
 		bool wantVsync;
 		std::string title;
+		std::function<void(Event&)> eventCallback;
 	};
 
 	class Window {
@@ -28,10 +33,10 @@ namespace XEngine {
 
 		virtual void OnUpdate() = 0;
 
-		int GetWidth() const { return m_Width; }
-		int GetHeight() const { return m_Height; }
-		bool IsVsync() const { return m_IsVsync; }
-		std::string GetTitle() const { return m_Title; }
+		int GetWidth()			const	{ return m_Spec.width;		}
+		int GetHeight()			const	{ return m_Spec.height;		}
+		bool IsVsync()			const	{ return m_Spec.wantVsync;	}
+		std::string GetTitle()	const	{ return m_Spec.title;		}
 
 		static std::unique_ptr<Window> CreateWindow(const WindowSpecification& spec);
 
@@ -40,10 +45,7 @@ namespace XEngine {
 		virtual void Shutdown() = 0;
 
 	protected:
-		int m_Width;
-		int m_Height;
-		bool m_IsVsync;
-		std::string m_Title;
+		WindowSpecification m_Spec;
 	};
 
 }

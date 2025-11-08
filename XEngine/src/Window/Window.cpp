@@ -10,12 +10,15 @@ namespace XEngine {
 		{
 		case Platform::Windows: return std::make_unique<WindowsWindow>(spec); break;
 			/* ... */
-		default: XEngine_CRITICAL("Unknown platform, can't create window");
+		default: 
+			XEngine_CRITICAL("Unknown platform, selecting windows");
+			return std::make_unique<WindowsWindow>(spec);
 		}
 	}
 
 	Window::Window(const WindowSpecification& spec)
-		: m_Width(spec.width), m_Height(spec.height), m_IsVsync(spec.wantVsync) {
+		:	m_Spec(spec)
+	{
 
 	}
 

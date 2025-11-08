@@ -7,40 +7,38 @@ namespace XEngine {
 
 	class MouseCursorMovedEvent : public Event {
 	public:
-		MouseCursorMovedEvent(int new_x, int new_y);
+		MouseCursorMovedEvent(double new_x, double new_y);
 		virtual ~MouseCursorMovedEvent() = default;
 
 		SET_STATIC_PART(MouseCursorMoved);
-		void OnEvent()				override;
 		std::string toString()		override;
 		EventCategory GetCategory() override;
 		EventType GetType()			override;
 
-		int GetX() const { return m_X; }
-		int GetY() const { return m_Y; }
+		double GetX() const { return m_X; }
+		double GetY() const { return m_Y; }
 
 	private:
-		int m_X;
-		int m_Y;
+		double m_X;
+		double m_Y;
 	};
 
 	class MouseScrolledEvent : public Event {
 	public:
-		MouseScrolledEvent(float new_xoffset, float new_yoffset);
+		MouseScrolledEvent(double new_xoffset, double new_yoffset);
 		virtual ~MouseScrolledEvent() = default;
 
 		SET_STATIC_PART(MouseScrolled);
-		void OnEvent()				override;
 		std::string toString()		override;
 		EventCategory GetCategory() override;
 		EventType GetType()			override;
 
-		float GetXoffset() const { return m_Xoffset; }
-		float GetYoffset() const { return m_Yoffset; }
+		double GetXoffset() const { return m_Xoffset; }
+		double GetYoffset() const { return m_Yoffset; }
 
 	private:
-		float m_Xoffset;
-		float m_Yoffset;
+		double m_Xoffset;
+		double m_Yoffset;
 	};
 
 	class MouseButtonPressedEvent : public Event {
@@ -49,7 +47,6 @@ namespace XEngine {
 		virtual ~MouseButtonPressedEvent() = default;
 
 		SET_STATIC_PART(MouseButtonPressed);
-		void OnEvent()              override;
 		std::string toString()      override;
 		EventCategory GetCategory() override;
 		EventType GetType()         override;
@@ -66,7 +63,6 @@ namespace XEngine {
 		virtual ~MouseButtonReleasedEvent() = default;
 
 		SET_STATIC_PART(MouseButtonReleased);
-		void OnEvent()              override;
 		std::string toString()      override;
 		EventCategory GetCategory() override;
 		EventType GetType()         override;
