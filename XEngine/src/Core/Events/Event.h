@@ -32,10 +32,15 @@ namespace XEngine {
 		Event() = default;
 		virtual ~Event() = default;
 
-		virtual void OnEvent()				= 0;
 		virtual std::string toString()		= 0;
 		virtual EventCategory GetCategory() = 0;
 		virtual EventType GetType()			= 0;
+
+		void SetHandled(bool handled) { m_Handled = handled; }
+		bool IsHandled() const { return m_Handled; }
+
+	protected:
+		bool m_Handled = false;
 	};
 
 	class EventDispatcher 

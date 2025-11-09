@@ -1,3 +1,5 @@
 #include "src/Core/LogSystem.h"
 #include "src/Core/Application.h"
+#include "src/Core/Layer.h"
+#include "src/Core/LayerStack.h"
 #include "src/Core/EntryPoint.h"

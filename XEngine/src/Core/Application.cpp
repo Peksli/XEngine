@@ -38,6 +38,10 @@ namespace XEngine {
 		while (m_Running)
 		{
 			m_Window->OnUpdate();
+			for (auto layer : m_LayerStack)
+			{
+				layer->OnUpdate();
+			}
 		}
 	}
 
@@ -51,7 +55,26 @@ namespace XEngine {
 				this->m_Running = false;
 			});
 
-		XEngine_TRACE(event.toString());
+		for (auto it = m_LayerStack.rbegin(); it != m_LayerStack.rend(); it++)
+		{
+			(*it)->OnEvent(event);
+			if (event.IsHandled())
+			{
+				break;
+			}
+		}
+	}
+
+	void Application::PushLayer(Layer* layer)
+	{
+		layer->OnAttach();
+		m_LayerStack.PushLayer(layer);
+	}
+
+	void Application::PushOverlay(Layer* overlay)
+	{
+		overlay->OnAttach();
+		m_LayerStack.PushOverlay(overlay);
 	}
 
 }
