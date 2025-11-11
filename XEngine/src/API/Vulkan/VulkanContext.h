@@ -1,7 +1,10 @@
 #pragma once
 
 #include "src/Renderer/Context.h"
+#include "src/API/Vulkan/VulkanPhysicalDevice.h"
+
 #include <vulkan/vulkan.h>
+
 
 struct GLFWwindow;
 
@@ -15,23 +18,30 @@ namespace XEngine {
 	class VulkanContext : public Context
 	{
 	public:
-		explicit VulkanContext(const VulkanContextSpecification& spec);
+		explicit VulkanContext(const VulkanContextSpecification&);
 		~VulkanContext() override;
 
 		void Initialize() override;
 		void SwapBuffers() override;
 
+		static VulkanContext* GetHandle() { return s_Instance; }
+		VkInstance GetIntance() const { return m_Instance; }
+		const std::unique_ptr<VulkanPhysicalDevice>& GetPhysicalDevice() const { return m_PhysicalDevice; }
+
 	private:
-		bool CheckLayersSupport(const std::vector<const char*>& requiredLayers) const;
-		bool CheckRequiredExtensionsSupport(const std::vector<const char*>& requiredExtensions) const;
-		void PopulateDebugMessengerCreateInfo(VkDebugUtilsMessengerCreateInfoEXT& createInfo);
+		bool CheckLayersSupport(const std::vector<const char*>&) const;
+		bool CheckRequiredExtensionsSupport(const std::vector<const char*>&) const;
+		void PopulateDebugMessengerCreateInfo(VkDebugUtilsMessengerCreateInfoEXT&);
 		VkResult CreateDebugMessenger();
 		void DestroyDebugMessenger();
 
 	private:
 		VulkanContextSpecification m_Spec;
-		VkInstance m_Instance = VK_NULL_HANDLE;
-		VkDebugUtilsMessengerEXT m_DebugMessenger = VK_NULL_HANDLE;
+		VkInstance m_Instance;
+		VkDebugUtilsMessengerEXT m_DebugMessenger;
+		std::unique_ptr<VulkanPhysicalDevice> m_PhysicalDevice;
+
+		static VulkanContext* s_Instance;
 	};
 
 }

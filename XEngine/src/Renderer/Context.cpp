@@ -9,21 +9,11 @@ namespace XEngine {
 	{
 		if (!window)
 		{
-			XEngine_CRITICAL("Can't create context because window is nullptr");
+			XEngine_CRITICAL("Can't create context because spec contains nullptr in window");
 		}
 	}
 
 	Context::~Context()
-	{
-
-	}
-
-	void Context::Initialize()
-	{
-
-	}
-
-	void Context::SwapBuffers()
 	{
 
 	}

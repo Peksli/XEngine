@@ -30,10 +30,20 @@ static VKAPI_ATTR VkBool32 VKAPI_CALL DebugCallback(
 
 namespace XEngine {
 
+	VulkanContext* VulkanContext::s_Instance = nullptr;
+
 	VulkanContext::VulkanContext(const VulkanContextSpecification& spec)
 		: Context(spec.window), m_Spec(spec), m_Instance(VK_NULL_HANDLE), m_DebugMessenger(VK_NULL_HANDLE)
 	{
-
+		if (s_Instance)
+		{
+			XEngine_CRITICAL("Trying to create another context while only 1 can be");
+			abort();
+		}
+		else
+		{
+			s_Instance = this;
+		}
 	}
 
 	VulkanContext::~VulkanContext()
@@ -47,6 +57,7 @@ namespace XEngine {
 
 	void VulkanContext::Initialize()
 	{
+		/* =============================== INSTANCE =============================== */
 #if defined(XEngine_DEBUG_BUILD)
 		std::vector<const char*> reqLayers = { "VK_LAYER_KHRONOS_validation" };
 
@@ -91,12 +102,15 @@ namespace XEngine {
 		instanceInfo.enabledLayerCount = 0;
 		instanceInfo.ppEnabledLayerNames = nullptr;
 #endif
-
 		CHECK_VK_RES(vkCreateInstance(&instanceInfo, nullptr, &m_Instance));
 
+		/* =============================== DEBUG MESSENGER =============================== */
 #if defined(XEngine_DEBUG_BUILD)
 		CHECK_VK_RES(CreateDebugMessenger());
 #endif
+
+		/* =============================== PHYSICAL DEVICE =============================== */
+		m_PhysicalDevice = std::make_unique<VulkanPhysicalDevice>();
 	}
 
 	void VulkanContext::SwapBuffers()

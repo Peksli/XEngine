@@ -39,16 +39,34 @@ namespace XEngine {
 
 }
 
-#define XEngine_TRACE(...)		XEngine::LogSystem::XEngineTrace(__VA_ARGS__);
-#define XEngine_DEBUG(...)		XEngine::LogSystem::XEngineDebug(__VA_ARGS__);
-#define XEngine_INFO(...)		XEngine::LogSystem::XEngineInfo(__VA_ARGS__);
-#define XEngine_WARN(...)		XEngine::LogSystem::XEngineWarn(__VA_ARGS__);
-#define XEngine_ERROR(...)		XEngine::LogSystem::XEngineError(__VA_ARGS__);
-#define XEngine_CRITICAL(...)	XEngine::LogSystem::XEngineCritical(__VA_ARGS__);
+#if defined(XEngine_DEBUG_BUILD)
 
+	#define XEngine_TRACE(...)      XEngine::LogSystem::XEngineTrace(__VA_ARGS__)
+	#define XEngine_DEBUG(...)      XEngine::LogSystem::XEngineDebug(__VA_ARGS__)
+	#define XEngine_INFO(...)       XEngine::LogSystem::XEngineInfo(__VA_ARGS__)
+	#define XEngine_WARN(...)       XEngine::LogSystem::XEngineWarn(__VA_ARGS__)
+	#define XEngine_ERROR(...)      XEngine::LogSystem::XEngineError(__VA_ARGS__)
+	#define XEngine_CRITICAL(...)   XEngine::LogSystem::XEngineCritical(__VA_ARGS__)
 
-#define Client_TRACE(...)		XEngine::LogSystem::ClientTrace(__VA_ARGS__);
-#define Client_DEBUG(...)		XEngine::LogSystem::ClientDebug(__VA_ARGS__);
-#define Client_INFO(...)		XEngine::LogSystem::ClientInfo(__VA_ARGS__);
-#define Client_WARN(...)		XEngine::LogSystem::ClientWarn(__VA_ARGS__);
-#define Client_CRITICAL(...)	XEngine::LogSystem::ClientCritical(__VA_ARGS__);
+	#define Client_TRACE(...)       XEngine::LogSystem::ClientTrace(__VA_ARGS__)
+	#define Client_DEBUG(...)       XEngine::LogSystem::ClientDebug(__VA_ARGS__)
+	#define Client_INFO(...)        XEngine::LogSystem::ClientInfo(__VA_ARGS__)
+	#define Client_WARN(...)        XEngine::LogSystem::ClientWarn(__VA_ARGS__)
+	#define Client_CRITICAL(...)    XEngine::LogSystem::ClientCritical(__VA_ARGS__)
+
+#else
+
+	#define XEngine_TRACE(...)
+	#define XEngine_DEBUG(...)
+	#define XEngine_INFO(...)
+	#define XEngine_WARN(...)
+	#define XEngine_ERROR(...)
+	#define XEngine_CRITICAL(...)
+
+	#define Client_TRACE(...)
+	#define Client_DEBUG(...)
+	#define Client_INFO(...)
+	#define Client_WARN(...)
+	#define Client_CRITICAL(...)
+
+#endif
