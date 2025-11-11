@@ -21,7 +21,7 @@ namespace XEngine {
 
 		const std::string& GetName() const { return m_Name; }
 
-	protected:
+	private:
 		std::string m_Name;
 	};
 

@@ -9,8 +9,10 @@ namespace XEngine {
 
 	Application::Application(ApplicationSpecification& spec)
 	{
+#if defined(XEngine_DEBUG_BUILD)
 		XE_PROFILE_BEGIN_SESSION("XEngine session", "profile_results.json");
 		XE_PROFILE_FUNCTION();
+#endif
 
 		WindowSpecification win_spec;
 		win_spec.width			= spec.window_width;
@@ -28,12 +30,14 @@ namespace XEngine {
 
 	Application::~Application()
 	{
-		XE_PROFILE_END_SESSION();
+
 	}
 
 	void Application::Run()
 	{
+#if defined(XEngine_DEBUG_BUILD)
 		XE_PROFILE_FUNCTION();
+#endif
 
 		while (m_Running)
 		{
@@ -47,8 +51,6 @@ namespace XEngine {
 
 	void Application::OnEvent(Event& event)
 	{
-		XE_PROFILE_FUNCTION();
-
 		EventDispatcher dispatcher(event);
 		dispatcher.Dispatch<WindowCloseEvent>([this](WindowCloseEvent& event) -> void
 			{

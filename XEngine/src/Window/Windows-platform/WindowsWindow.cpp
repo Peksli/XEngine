@@ -1,4 +1,5 @@
 #include "src/Window/Windows-platform/WindowsWindow.h"
+#include "src/API/Vulkan/VulkanContext.h"
 #include "src/Core/LogSystem.h"
 
 
@@ -25,18 +26,22 @@ namespace XEngine {
 		glfwInit();
 		glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
 		glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
-
 		m_Window = glfwCreateWindow(m_Spec.width, m_Spec.height, m_Spec.title.c_str(), nullptr, nullptr);
-
-		if (!m_Window) 
+		if (!m_Window)
 		{
 			XEngine_CRITICAL("Didn't create glfw window");
 			glfwTerminate();
 			return;
 		}
-
 		glfwMakeContextCurrent(m_Window);
 		glfwSetWindowUserPointer(m_Window, &m_Spec);
+
+		// Context
+		VulkanContextSpecification ctxSpec;
+		ctxSpec.window = m_Window;
+
+		m_Context = std::make_unique<VulkanContext>(ctxSpec);
+		m_Context->Initialize();
 
 		// Window events
 		glfwSetWindowCloseCallback(m_Window, [](GLFWwindow* window)

@@ -4,7 +4,7 @@
 namespace XEngine {
 
 	ImGuiLayer::ImGuiLayer(std::string name)
-		: m_Name(name)
+		: Layer(name)
 	{
 
 	}

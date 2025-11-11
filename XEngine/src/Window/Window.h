@@ -2,22 +2,26 @@
 
 #include <memory>
 #include <string>
+
 #include "src/Core/Events/Event.h"
 #include "src/Core/Events/WindowEvents.h"
 #include "src/Core/Events/KeyboardEvents.h"
 #include "src/Core/Events/MouseEvents.h"
+#include "src/Renderer/Context.h"
 
 
 namespace XEngine {
 
-	enum class Platform {
+	enum class Platform 
+	{
 		None,
 		Windows,
 		Linux,
 		Mac
 	};
 
-	struct WindowSpecification {
+	struct WindowSpecification 
+	{
 		Platform platform;
 		int width;
 		int height;
@@ -26,7 +30,8 @@ namespace XEngine {
 		std::function<void(Event&)> eventCallback;
 	};
 
-	class Window {
+	class Window 
+	{
 	public:
 		Window(const WindowSpecification& spec);
 		virtual ~Window() = default;
@@ -46,6 +51,7 @@ namespace XEngine {
 
 	protected:
 		WindowSpecification m_Spec;
+		std::unique_ptr<Context> m_Context;
 	};
 
 }
