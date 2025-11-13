@@ -11,13 +11,12 @@ namespace XEngine {
 		VulkanDevice();
 		virtual ~VulkanDevice();
 
+		void Initialize();
+		void Destroy();
+
 		VkDevice GetHandle() const { return m_Device; }
 		VkQueue GetGraphicsQueue() const { return m_GraphicsQueue; }
 		VkQueue GetTransferQueue() const { return m_TransferQueue; }
-
-	private:
-		void Initialize();
-		void Destroy();
 
 	private:
 		VkDevice m_Device;

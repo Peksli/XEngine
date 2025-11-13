@@ -11,12 +11,12 @@ namespace XEngine {
 			m_GraphicsQueue(VK_NULL_HANDLE), 
 			m_TransferQueue(VK_NULL_HANDLE)
 	{
-		Initialize();
+
 	}
 
 	VulkanDevice::~VulkanDevice()
 	{
-		Destroy();
+
 	}
 
 	void VulkanDevice::Initialize()

@@ -48,6 +48,7 @@ namespace XEngine {
 
 	VulkanContext::~VulkanContext()
 	{
+		m_Device->Destroy();
 		DestroyDebugMessenger();
 		if (m_Instance != VK_NULL_HANDLE) 
 		{
@@ -114,6 +115,7 @@ namespace XEngine {
 
 		/* =============================== LOGICAL DEVICE =============================== */
 		m_Device = std::make_unique<VulkanDevice>();
+		m_Device->Initialize();
 	}
 
 	void VulkanContext::SwapBuffers()

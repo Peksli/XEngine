@@ -6,7 +6,7 @@
 namespace XEngine {
 
 	VulkanPhysicalDevice::VulkanPhysicalDevice()
-		: m_PhysicalDevice(VK_NULL_HANDLE), m_Features2()
+		: m_PhysicalDevice(VK_NULL_HANDLE)
 	{
 		VulkanContext* context = VulkanContext::GetHandle();
 
