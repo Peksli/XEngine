@@ -111,6 +111,9 @@ namespace XEngine {
 
 		/* =============================== PHYSICAL DEVICE =============================== */
 		m_PhysicalDevice = std::make_unique<VulkanPhysicalDevice>();
+
+		/* =============================== LOGICAL DEVICE =============================== */
+		m_Device = std::make_unique<VulkanDevice>();
 	}
 
 	void VulkanContext::SwapBuffers()

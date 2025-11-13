@@ -6,7 +6,7 @@
 namespace XEngine {
 
 	VulkanPhysicalDevice::VulkanPhysicalDevice()
-		: m_PhysicalDevice(VK_NULL_HANDLE)
+		: m_PhysicalDevice(VK_NULL_HANDLE), m_Features2()
 	{
 		VulkanContext* context = VulkanContext::GetHandle();
 
@@ -61,21 +61,21 @@ namespace XEngine {
 			VkPhysicalDeviceProperties props{};
 			vkGetPhysicalDeviceProperties(device, &props);
 
-			VkPhysicalDeviceVulkan12Features features12{};
+			VkPhysicalDeviceVulkan12Features features12 = {};
 			features12.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_2_FEATURES;
 
-			VkPhysicalDeviceVulkan13Features features13{};
+			VkPhysicalDeviceVulkan13Features features13 = {};
 			features13.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_3_FEATURES;
 			features13.pNext = &features12;
 
-			VkPhysicalDeviceFeatures2 features2{};
+			VkPhysicalDeviceFeatures2 features2 = {};
 			features2.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FEATURES_2;
 			features2.pNext = &features13;
 
 			vkGetPhysicalDeviceFeatures2(device, &features2);
 
 			if (props.apiVersion >= VK_API_VERSION_1_4)
-				score += 100;
+				score += 100;	
 
 			if (props.deviceType == VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU)
 				score += 150;

@@ -15,8 +15,10 @@ namespace XEngine {
 		VulkanPhysicalDevice();
 		~VulkanPhysicalDevice() = default;
 
-		VkPhysicalDevice GetSelectedDevice() const { return m_PhysicalDevice; }
+		VkPhysicalDevice GetRaw() const { return m_PhysicalDevice; }
 		std::string GetName() const;
+		std::optional<uint32_t> GetGraphicsFamilyIdx() const { return m_GraphicsQueueFamily; }
+		std::optional<uint32_t> GetTransferFamilyIdx() const { return m_TransferQueueFamily; }
 
 	private:
 		std::vector<VkPhysicalDevice> EnumeratePhysicalDevices() const;
