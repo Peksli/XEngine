@@ -4,13 +4,9 @@
 
 namespace XEngine {
 
-	Context::Context(GLFWwindow* window)
-		: m_Window(window)
+	Context::Context()
 	{
-		if (!window)
-		{
-			XEngine_CRITICAL("Can't create context because spec contains nullptr in window");
-		}
+
 	}
 
 	Context::~Context()

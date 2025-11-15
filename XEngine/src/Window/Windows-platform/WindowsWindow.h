@@ -11,11 +11,12 @@ namespace XEngine {
 		WindowsWindow(const WindowSpecification& spec);
 		virtual ~WindowsWindow();
 
-		void OnUpdate() override;
-
-	private:
 		void Initialize() override;
 		void Shutdown() override;
+		void OnUpdate() override;
+
+	protected:
+		void InitializeContext() override;
 
 	private:
 		GLFWwindow* m_Window = nullptr;

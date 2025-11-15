@@ -9,7 +9,8 @@ namespace XEngine {
 	VulkanDevice::VulkanDevice()
 		:	m_Device(VK_NULL_HANDLE), 
 			m_GraphicsQueue(VK_NULL_HANDLE), 
-			m_TransferQueue(VK_NULL_HANDLE)
+			m_TransferQueue(VK_NULL_HANDLE),
+			m_PresentationQueue(VK_NULL_HANDLE)
 	{
 
 	}
@@ -21,33 +22,29 @@ namespace XEngine {
 
 	void VulkanDevice::Initialize()
 	{
-		VulkanContext* context = VulkanContext::GetHandle();
+		VulkanContext* ctx = VulkanContext::GetRaw();
+	
+		std::vector<VkDeviceQueueCreateInfo> queueInfos;
 
-		constexpr uint32_t queuesCount = 2;
-		float queuePriority = 1.0f;
+		std::set<uint32_t> uniqueIndices = 
+		{
+			ctx->GetPhysicalDevice()->GetGraphicsFamilyIdx(),
+			ctx->GetPhysicalDevice()->GetTransferFamilyIdx(),
+			ctx->GetPhysicalDevice()->GetPresentationFamilyIdx()
+		};
 
-		// from which queue family we will take graphicsQueue and how much
-		VkDeviceQueueCreateInfo graphicsQueueInfo = {};
-		graphicsQueueInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
-		graphicsQueueInfo.pNext = nullptr;
-		graphicsQueueInfo.flags = 0;
-		graphicsQueueInfo.queueFamilyIndex = context->GetPhysicalDevice()->GetGraphicsFamilyIdx().value();
-		graphicsQueueInfo.queueCount = 1;
-		graphicsQueueInfo.pQueuePriorities = nullptr;
-		graphicsQueueInfo.pQueuePriorities = &queuePriority;
-
-		// from which queue family we will take transferQueue and how much
-		VkDeviceQueueCreateInfo trasnferQueueInfo = {};
-		trasnferQueueInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
-		trasnferQueueInfo.pNext = nullptr;
-		trasnferQueueInfo.flags = 0;
-		trasnferQueueInfo.queueFamilyIndex = context->GetPhysicalDevice()->GetTransferFamilyIdx().value();
-		trasnferQueueInfo.queueCount = 1;
-		trasnferQueueInfo.pQueuePriorities = &queuePriority;
-
-		std::array<VkDeviceQueueCreateInfo, 2> queueInfos;
-		queueInfos[0] = graphicsQueueInfo;
-		queueInfos[1] = trasnferQueueInfo;
+		float priority = 1.0f;
+		for (uint32_t familyIdx : uniqueIndices)
+		{
+			VkDeviceQueueCreateInfo queueInfo = {};
+			queueInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
+			queueInfo.pNext = nullptr;
+			queueInfo.flags = 0;
+			queueInfo.queueFamilyIndex = familyIdx;
+			queueInfo.queueCount = 1;
+			queueInfo.pQueuePriorities = &priority;
+			queueInfos.push_back(queueInfo);
+		}
 
 		// since we already filtered physicalDevice, we can just request features
 		VkPhysicalDeviceVulkan12Features features12 = {};
@@ -78,18 +75,19 @@ namespace XEngine {
 		// Creating device
 		CHECK_VK_RES(
 			vkCreateDevice(
-				context->GetPhysicalDevice()->GetRaw(), 
+				ctx->GetPhysicalDevice()->GetRaw(), 
 				&deviceInfo, 
 				nullptr, 
 				&m_Device)
 		);
 
 		// setting up queues
-		vkGetDeviceQueue(m_Device, context->GetPhysicalDevice()->GetGraphicsFamilyIdx().value(), 0, &m_GraphicsQueue);
-		vkGetDeviceQueue(m_Device, context->GetPhysicalDevice()->GetTransferFamilyIdx().value(), 0, &m_TransferQueue);
+		vkGetDeviceQueue(m_Device, ctx->GetPhysicalDevice()->GetGraphicsFamilyIdx(), 0, &m_GraphicsQueue);
+		vkGetDeviceQueue(m_Device, ctx->GetPhysicalDevice()->GetTransferFamilyIdx(), 0, &m_TransferQueue);
+		vkGetDeviceQueue(m_Device, ctx->GetPhysicalDevice()->GetPresentationFamilyIdx(), 0, &m_PresentationQueue);
 	}
 
-	void VulkanDevice::Destroy()
+	void VulkanDevice::Shutdown()
 	{
 		vkDestroyDevice(
 			m_Device, 

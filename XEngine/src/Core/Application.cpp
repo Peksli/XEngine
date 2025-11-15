@@ -7,8 +7,12 @@
 
 namespace XEngine {
 
+	XEngine::Application* Application::s_Instance = nullptr;
+
 	Application::Application(ApplicationSpecification& spec)
 	{
+		s_Instance = this;
+
 #if defined(XEngine_DEBUG_BUILD)
 		XE_PROFILE_BEGIN_SESSION("XEngine session", "profile_results.json");
 		XE_PROFILE_FUNCTION();
@@ -25,12 +29,13 @@ namespace XEngine {
 				this->OnEvent(event);
 			};
 
-		m_Window = Window::CreateWindow(win_spec);
+		m_Window = Window::Create(win_spec);
+		m_Window->Initialize();
 	}
 
 	Application::~Application()
 	{
-
+		m_Window->Shutdown();
 	}
 
 	void Application::Run()

@@ -33,21 +33,22 @@ namespace XEngine {
 	class Window 
 	{
 	public:
-		Window(const WindowSpecification& spec);
-		virtual ~Window() = default;
+		Window(const WindowSpecification&);
+		virtual ~Window();
 
 		virtual void OnUpdate() = 0;
 
-		int GetWidth()			const	{ return m_Spec.width;		}
-		int GetHeight()			const	{ return m_Spec.height;		}
+		static std::unique_ptr<Window> Create(WindowSpecification&);
+		virtual void Initialize() = 0;
+		virtual void Shutdown() = 0;
+
+		int  GetWidth()			const	{ return m_Spec.width;		}
+		int  GetHeight()		const	{ return m_Spec.height;		}
 		bool IsVsync()			const	{ return m_Spec.wantVsync;	}
 		std::string GetTitle()	const	{ return m_Spec.title;		}
 
-		static std::unique_ptr<Window> CreateWindow(const WindowSpecification& spec);
-
 	protected:
-		virtual void Initialize() = 0;
-		virtual void Shutdown() = 0;
+		virtual void InitializeContext() = 0;
 
 	protected:
 		WindowSpecification m_Spec;

@@ -8,12 +8,9 @@ namespace XEngine {
 	VulkanPhysicalDevice::VulkanPhysicalDevice()
 		: m_PhysicalDevice(VK_NULL_HANDLE)
 	{
-		VulkanContext* context = VulkanContext::GetHandle();
+		LogDevices();
 
-		auto devices = EnumeratePhysicalDevices();
-		LogAvailableDevices(devices);
-
-		auto scoredDevices = EvaluateDevices(devices);
+		auto scoredDevices = EvaluateDevices(GetDevices());
 
 		if (!scoredDevices.empty()) 
 		{
@@ -28,21 +25,25 @@ namespace XEngine {
 		DetermineQueueFamilies();
 	}
 
-	std::vector<VkPhysicalDevice> VulkanPhysicalDevice::EnumeratePhysicalDevices() const
+	std::vector<VkPhysicalDevice> VulkanPhysicalDevice::GetDevices()
 	{
-		VulkanContext* context = VulkanContext::GetHandle();
+		VulkanContext* ctx = VulkanContext::GetRaw();
 
 		uint32_t deviceCount = 0;
-		vkEnumeratePhysicalDevices(context->GetIntance(), &deviceCount, nullptr);
+		vkEnumeratePhysicalDevices(*ctx->GetInstance(), &deviceCount, nullptr);
 		std::vector<VkPhysicalDevice> devices(deviceCount);
-		vkEnumeratePhysicalDevices(context->GetIntance(), &deviceCount, devices.data());
+		vkEnumeratePhysicalDevices(*ctx->GetInstance(), &deviceCount, devices.data());
 
 		return devices;
 	}
 
-	void VulkanPhysicalDevice::LogAvailableDevices(const std::vector<VkPhysicalDevice>& devices) const
+	void VulkanPhysicalDevice::LogDevices()
 	{
-		XEngine_DEBUG("Found Vulkan Physical Devices:");
+		VulkanContext* ctx = VulkanContext::GetRaw();
+
+		auto devices = std::move(GetDevices());
+
+		XEngine_DEBUG("Found physical devices:");
 		for (const auto& device : devices)
 		{
 			VkPhysicalDeviceProperties props{};
@@ -96,6 +97,7 @@ namespace XEngine {
 	{
 		uint32_t familyCount = 0;
 		vkGetPhysicalDeviceQueueFamilyProperties2(m_PhysicalDevice, &familyCount, nullptr);
+
 		std::vector<VkQueueFamilyProperties2> familyProps(familyCount);
 		for (auto& fp : familyProps)
 		{
@@ -106,27 +108,40 @@ namespace XEngine {
 
 		m_GraphicsQueueFamily.reset();
 		m_TransferQueueFamily.reset();
+		m_PresentationQueueFamily.reset();
+
+		VulkanContext* ctx = VulkanContext::GetRaw();
+		auto surface = ctx->GetSurface()->GetRaw();
 
 		for (uint32_t i = 0; i < familyCount; ++i)
 		{
 			const auto& props = familyProps[i].queueFamilyProperties;
 
-			if ((props.queueFlags & VK_QUEUE_GRAPHICS_BIT) && !m_GraphicsQueueFamily.has_value())
+			if (!m_GraphicsQueueFamily.has_value() && (props.queueFlags & VK_QUEUE_GRAPHICS_BIT))
 			{
 				m_GraphicsQueueFamily = i;
 			}
 
-			if ((props.queueFlags & VK_QUEUE_TRANSFER_BIT) &&
-				!(props.queueFlags & VK_QUEUE_GRAPHICS_BIT) &&
-				!m_TransferQueueFamily.has_value())
+			if (!m_TransferQueueFamily.has_value() &&
+				(props.queueFlags & VK_QUEUE_TRANSFER_BIT) &&
+				!(props.queueFlags & VK_QUEUE_GRAPHICS_BIT))
 			{
 				m_TransferQueueFamily = i;
+			}
+
+			VkBool32 isSupported = VK_FALSE;
+			vkGetPhysicalDeviceSurfaceSupportKHR(m_PhysicalDevice, i, surface, &isSupported);
+			if (isSupported && !m_PresentationQueueFamily.has_value())
+			{
+				m_PresentationQueueFamily = i;
 			}
 		}
 
 		if (!m_GraphicsQueueFamily.has_value()) XEngine_CRITICAL("Didn't find graphics queue");
 		if (!m_TransferQueueFamily.has_value()) XEngine_CRITICAL("Didn't find transfer queue");
+		if (!m_PresentationQueueFamily.has_value()) XEngine_CRITICAL("Didn't find presentation queue");
 	}
+
 
 	std::string VulkanPhysicalDevice::GetName() const
 	{

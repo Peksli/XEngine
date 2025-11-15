@@ -8,17 +8,26 @@ namespace XEngine {
 	WindowsWindow::WindowsWindow(const WindowSpecification& spec) 
 	: Window(spec) 
 	{
-		Initialize();
+
 	}
 
 	WindowsWindow::~WindowsWindow() 
 	{
-		Shutdown();
+
 	}
 
 	void WindowsWindow::OnUpdate() 
 	{
 		glfwPollEvents();
+	}
+
+	void WindowsWindow::InitializeContext()
+	{
+		VulkanContextSpecification ctxSpec;
+		ctxSpec.window = m_Window;
+
+		m_Context = std::make_unique<VulkanContext>(ctxSpec);
+		m_Context->Initialize();
 	}
 
 	void WindowsWindow::Initialize()
@@ -37,11 +46,7 @@ namespace XEngine {
 		glfwSetWindowUserPointer(m_Window, &m_Spec);
 
 		// Context
-		VulkanContextSpecification ctxSpec;
-		ctxSpec.window = m_Window;
-
-		m_Context = std::make_unique<VulkanContext>(ctxSpec);
-		m_Context->Initialize();
+		InitializeContext();
 
 		// Window events
 		glfwSetWindowCloseCallback(m_Window, [](GLFWwindow* window)
@@ -144,6 +149,8 @@ namespace XEngine {
 
 	void WindowsWindow::Shutdown() 
 	{
+		m_Context->Shutdown();
+
 		glfwDestroyWindow(m_Window);
 		glfwTerminate();
 	}
