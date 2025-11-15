@@ -87,6 +87,9 @@ namespace XEngine {
 			if (!features12.bufferDeviceAddress || !features12.descriptorIndexing)
 				continue;
 
+			if(!CheckRequiredExtensions(device))
+				continue;
+
 			scoredDevices.emplace(score, device);
 		}
 
@@ -142,6 +145,33 @@ namespace XEngine {
 		if (!m_PresentationQueueFamily.has_value()) XEngine_CRITICAL("Didn't find presentation queue");
 	}
 
+	bool VulkanPhysicalDevice::CheckRequiredExtensions(const VkPhysicalDevice& physicalDevice) const
+	{
+		uint32_t extensionsCount = 0;
+		vkEnumerateDeviceExtensionProperties(physicalDevice, nullptr, &extensionsCount, nullptr);
+		std::vector<VkExtensionProperties> availableExtensions(extensionsCount);
+		vkEnumerateDeviceExtensionProperties(physicalDevice, nullptr, &extensionsCount, availableExtensions.data());
+
+		for (const auto& required : m_Extensions) 
+		{
+			bool found = false;
+			for (const auto& available : availableExtensions)
+			{
+				if (strcmp(required, available.extensionName) == 0) 
+				{
+					found = true;
+					break;
+				}
+			}
+			if (!found)
+			{
+				XEngine_DEBUG(fmt::runtime("Missing required extension: {}"), required);
+				return false;
+			}
+		}
+
+		return true;
+	}
 
 	std::string VulkanPhysicalDevice::GetName() const
 	{

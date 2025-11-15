@@ -6,6 +6,7 @@
 #include "src/API/Vulkan/VulkanSurface.h"
 #include "src/API/Vulkan/VulkanPhysicalDevice.h"
 #include "src/API/Vulkan/VulkanDevice.h"
+#include "src/API/Vulkan/VulkanSwapchain.h"
 
 #include <memory>
 
@@ -34,7 +35,8 @@ namespace XEngine {
 		const std::unique_ptr<VulkanSurface>&			GetSurface()		const { return m_Surface;			}
 		const std::unique_ptr<VulkanPhysicalDevice>&	GetPhysicalDevice() const { return m_PhysicalDevice;	}
 		const std::unique_ptr<VulkanDevice>&			GetDevice()			const { return m_Device;			}
-		
+		const std::unique_ptr<VulkanSwapchain>&			GetSwapchain()		const { return m_Swapchain;			}
+		const VulkanContextSpecification&				GetSpecification()	const { return m_Specification;		}
 
 	private:
 		std::unique_ptr<VulkanDebugger> m_Debugger;
@@ -42,6 +44,7 @@ namespace XEngine {
 		std::unique_ptr<VulkanSurface> m_Surface;
 		std::unique_ptr<VulkanPhysicalDevice> m_PhysicalDevice;
 		std::unique_ptr<VulkanDevice> m_Device;
+		std::unique_ptr<VulkanSwapchain> m_Swapchain;
 
 		static VulkanContext* s_Instance;
 		VulkanContextSpecification m_Specification;

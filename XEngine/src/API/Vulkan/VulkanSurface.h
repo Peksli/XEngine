@@ -16,6 +16,8 @@ namespace XEngine {
 
 		VkSurfaceKHR GetRaw() const { return m_Surface; }
 
+		operator VkSurfaceKHR() const { return m_Surface; }
+
 	private:
 		VkSurfaceKHR m_Surface;
 	};

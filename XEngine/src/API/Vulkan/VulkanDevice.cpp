@@ -62,14 +62,16 @@ namespace XEngine {
 		features2.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FEATURES_2;
 		features2.pNext = &features13;
 
+		const std::vector<const char*>& extensions = ctx->GetPhysicalDevice()->GetExtensions();
+
 		VkDeviceCreateInfo deviceInfo = {};
 		deviceInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
 		deviceInfo.pNext = &features2;
 		deviceInfo.flags = 0;
 		deviceInfo.queueCreateInfoCount = queueInfos.size();
 		deviceInfo.pQueueCreateInfos = queueInfos.data();
-		deviceInfo.enabledExtensionCount = 0;
-		deviceInfo.ppEnabledExtensionNames = nullptr;
+		deviceInfo.enabledExtensionCount = static_cast<uint32_t>(extensions.size());
+		deviceInfo.ppEnabledExtensionNames = extensions.data();
 		deviceInfo.pEnabledFeatures = nullptr;
 
 		// Creating device

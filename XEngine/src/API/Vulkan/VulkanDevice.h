@@ -19,6 +19,8 @@ namespace XEngine {
 		VkQueue  GetTransferQueue() const { return m_TransferQueue; }
 		VkQueue  GetPresentationQueue() const { return m_PresentationQueue; }
 
+		operator VkDevice() const { return m_Device; }
+
 	private:
 		VkDevice m_Device;
 		VkQueue m_GraphicsQueue;
