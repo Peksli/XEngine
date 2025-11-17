@@ -24,6 +24,7 @@ namespace XEngine {
 		VulkanContext* ctx = VulkanContext::GetRaw();
 
 		VulkanSwapchainDetails details = GetDetails();
+
 		VkSurfaceCapabilitiesKHR capabilities = details.capabilities;
 		VkSurfaceFormatKHR format = ChooseSurfaceFormat(details.formats);
 		VkPresentModeKHR presentMode = ChoosePresentMode(details.present_modes);
@@ -71,23 +72,32 @@ namespace XEngine {
 		createInfo.oldSwapchain = VK_NULL_HANDLE;
 
 		CHECK_VK_RES(
-			vkCreateSwapchainKHR(
+			vkCreateSwapchainKHR(	
 				*ctx->GetDevice(),
 				&createInfo, 
 				nullptr,
 				&m_Swapchain)
 		);
 
-		uint32_t imageCount = 0;
-		vkGetSwapchainImagesKHR(*ctx->GetDevice(), m_Swapchain, &imageCount, nullptr);
-		m_Images.resize(imageCount);
-		vkGetSwapchainImagesKHR(*ctx->GetDevice(), m_Swapchain, &imageCount, m_Images.data());
+		// Images
+		ImageSpecification spec;
+		spec.format = format.format;
+		spec.colorSpace = format.colorSpace;
+
+		CreateSwapchainImages(spec);
 	}
 
 	void VulkanSwapchain::Shutdown()
 	{
 		VulkanContext* ctx = VulkanContext::GetRaw();
 
+		// image view
+		for (VkImageView view : m_Images)
+		{
+			vkDestroyImageView(*ctx->GetDevice(), view, nullptr);
+		}
+
+		// swapchain
 		vkDestroySwapchainKHR(*ctx->GetDevice(), m_Swapchain, nullptr);
 	}
 
@@ -152,7 +162,8 @@ namespace XEngine {
 			XEngine_CRITICAL("No present modes available!");
 			return VkPresentModeKHR{};
 		}
-
+		
+		/* Very pref - mailbox, if not present then fifo, else immediate */
 		return ChooseBest(modes,
 			[](const VkPresentModeKHR& mode) 
 			{
@@ -222,6 +233,51 @@ namespace XEngine {
 			);
 
 			return realExtent;
+		}
+	}
+
+	void VulkanSwapchain::CreateSwapchainImages(const ImageSpecification& spec)
+	{
+		VulkanContext* ctx = VulkanContext::GetRaw();
+
+		std::vector<VkImage> swapchain_images;
+
+		uint32_t imageCount = 0;
+		vkGetSwapchainImagesKHR(*ctx->GetDevice(), m_Swapchain, &imageCount, nullptr);
+		swapchain_images.resize(imageCount);
+		vkGetSwapchainImagesKHR(*ctx->GetDevice(), m_Swapchain, &imageCount, swapchain_images.data());
+
+		m_Images.reserve(imageCount);
+
+		for (uint32_t i = 0; i < imageCount; ++i)
+		{
+			VkImageView view = VK_NULL_HANDLE;
+
+			VkImageViewCreateInfo createInfo = {};
+			createInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
+			createInfo.pNext = nullptr;
+			createInfo.image = swapchain_images[i];
+			createInfo.viewType = VK_IMAGE_VIEW_TYPE_2D;
+			createInfo.format = spec.format;
+			createInfo.components.r = VK_COMPONENT_SWIZZLE_IDENTITY;
+			createInfo.components.g = VK_COMPONENT_SWIZZLE_IDENTITY;
+			createInfo.components.b = VK_COMPONENT_SWIZZLE_IDENTITY;
+			createInfo.components.a = VK_COMPONENT_SWIZZLE_IDENTITY;
+			createInfo.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+			createInfo.subresourceRange.baseArrayLayer = 0;
+			createInfo.subresourceRange.layerCount = 1;
+			createInfo.subresourceRange.baseMipLevel = 0;
+			createInfo.subresourceRange.levelCount = 1;
+
+			CHECK_VK_RES(
+				vkCreateImageView(
+					*ctx->GetDevice(),
+					&createInfo,
+					nullptr,
+					&view)
+			);
+
+			m_Images.emplace_back(spec, swapchain_images[i], view);
 		}
 	}
 
