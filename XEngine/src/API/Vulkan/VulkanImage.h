@@ -16,6 +16,7 @@ namespace XEngine {
 	{
 		VkFormat format = VK_FORMAT_UNDEFINED;
 		VkColorSpaceKHR colorSpace = VK_COLOR_SPACE_SRGB_NONLINEAR_KHR;
+		VkExtent2D extent = {};
 	};
 
 #pragma region Images

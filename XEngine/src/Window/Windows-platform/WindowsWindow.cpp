@@ -25,6 +25,8 @@ namespace XEngine {
 	{
 		VulkanContextSpecification ctxSpec;
 		ctxSpec.window = m_Window;
+		ctxSpec.window_width = m_Spec.width;
+		ctxSpec.window_height = m_Spec.width;
 
 		m_Context = std::make_unique<VulkanContext>(ctxSpec);
 		m_Context->Initialize();

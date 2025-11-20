@@ -2,6 +2,9 @@
 #include "src/Utility/Utility.h"
 #include "src/Core/LogSystem.h"
 
+// !!!!! for test
+#include "src/API/Vulkan/VulkanPipeline.h"
+
 #include <GLFW/glfw3.h>
 
 
@@ -38,6 +41,16 @@ namespace XEngine {
 
 		m_Swapchain = std::make_unique<VulkanSwapchain>();
 		m_Swapchain->Initialize();
+
+		PipelineSpecification spec;
+		spec.type = PipelineType::GRAPHICS;
+		spec.window_width = m_Specification.window_width;
+		spec.window_height = m_Specification.window_height;
+
+		VulkanPipeline* pipeline = new VulkanPipeline(spec);
+		pipeline->Initialize();
+		pipeline->Shutdown();
+		delete pipeline;
 	}
 
 	void VulkanContext::SwapBuffers()

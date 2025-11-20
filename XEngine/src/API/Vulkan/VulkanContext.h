@@ -16,6 +16,8 @@ namespace XEngine {
 	struct VulkanContextSpecification
 	{
 		void* window = nullptr;
+		uint32_t window_width = 0;
+		uint32_t window_height = 0;
 	};
 
 	class VulkanContext : public Context

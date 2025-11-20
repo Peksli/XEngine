@@ -83,6 +83,7 @@ namespace XEngine {
 		ImageSpecification spec;
 		spec.format = format.format;
 		spec.colorSpace = format.colorSpace;
+		spec.extent = extent2D;
 
 		CreateSwapchainImages(spec);
 	}
